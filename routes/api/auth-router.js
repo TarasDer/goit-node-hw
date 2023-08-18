@@ -6,12 +6,13 @@ import usersSchemas from "../../schemas/users-schemas.js";
 
 import { validateBody } from "../../decorators/index.js";
 
-import { authenticate } from "../../middlewares/index.js";
+import { upload, authenticate } from "../../middlewares/index.js";
 
 const authRouter = express.Router();
 
 authRouter.post(
   "/register",
+  upload.single("avatarURL"),
   validateBody(usersSchemas.userSignupSchema),
   authController.signup
 );
@@ -25,5 +26,11 @@ authRouter.post(
 authRouter.get("/current", authenticate, authController.getCurrent);
 
 authRouter.post("/logout", authenticate, authController.signout);
+authRouter.patch(
+  "/avatars",
+  authenticate,
+  upload.single("avatarURL"),
+  authController.updateAvatar
+);
 
 export default authRouter;
